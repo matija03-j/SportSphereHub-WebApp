@@ -5,3 +5,4 @@ uploads/*
 !uploads/.gitkeep
 !uploads/default-avatar.svg
 !uploads/default-equipment.svg
+../.claude
