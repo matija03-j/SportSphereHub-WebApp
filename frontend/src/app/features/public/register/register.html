@@ -1,0 +1,138 @@
+<div class="auth-wrap">
+  <form class="card auth-card" [formGroup]="form" (ngSubmit)="submit()" style="max-width: 620px">
+    <h1>Registracija</h1>
+
+    @if (error()) { <div class="alert alert-error">{{ error() }}</div> }
+    @if (success()) { <div class="alert alert-success">{{ success() }}</div> }
+
+    <div class="form-group">
+      <label>Tip naloga</label>
+      <select formControlName="role">
+        <option value="athlete">Sportista</option>
+        <option value="employee">Zaposleni u objektu</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label for="username">Korisničko ime</label>
+        <input id="username" formControlName="username" />
+        @if (form.controls.username.touched && form.controls.username.invalid) {
+          <div class="field-error">Obavezno, najmanje 3 karaktera.</div>
+        }
+      </div>
+      <div class="form-group">
+        <label for="password">Lozinka</label>
+        <input id="password" type="password" formControlName="password" />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <div class="field-error">8–12 karaktera, počinje slovom, veliko slovo + broj + specijalni karakter.</div>
+        }
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label for="firstName">Ime</label>
+        <input id="firstName" formControlName="firstName" />
+      </div>
+      <div class="form-group">
+        <label for="lastName">Prezime</label>
+        <input id="lastName" formControlName="lastName" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label for="phone">Kontakt telefon</label>
+        <input id="phone" formControlName="phone" />
+      </div>
+      <div class="form-group">
+        <label for="email">E-mejl</label>
+        <input id="email" type="email" formControlName="email" />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <div class="field-error">Neispravan e-mejl.</div>
+        }
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Omiljeni sportovi (najviše 5)</label>
+      <div class="chips">
+        @for (s of sports(); track s._id) {
+          <span
+            class="chip"
+            [class.selected]="selectedSports().includes(s.name)"
+            (click)="toggleSport(s.name)"
+          >{{ s.name }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- Employee-only fields -->
+    @if (isEmployee) {
+      <fieldset class="card" style="margin-bottom:1rem">
+        <legend>Podaci o objektu</legend>
+        <div class="form-group">
+          <label for="facilityName">Naziv sportskog objekta</label>
+          <input id="facilityName" formControlName="facilityName" />
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label for="address">Adresa sedišta</label>
+            <input id="address" formControlName="address" />
+          </div>
+          <div class="form-group">
+            <label for="city">Grad</label>
+            <input id="city" formControlName="city" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label for="maticniBroj">Matični broj (8 cifara)</label>
+            <input id="maticniBroj" formControlName="maticniBroj" />
+            @if (form.controls.maticniBroj.touched && form.controls.maticniBroj.invalid) {
+              <div class="field-error">Tačno 8 cifara.</div>
+            }
+          </div>
+          <div class="form-group">
+            <label for="pib">PIB (9 cifara)</label>
+            <input id="pib" formControlName="pib" />
+            @if (form.controls.pib.touched && form.controls.pib.invalid) {
+              <div class="field-error">Tačno 9 cifara, ne počinje nulom.</div>
+            }
+          </div>
+        </div>
+      </fieldset>
+    }
+
+    <!-- Profile image: upload OR generate avatar (no external links) -->
+    <div class="form-group">
+      <label>Profilna slika</label>
+      <div class="row" style="align-items:center">
+        <div>
+          <input type="file" accept="image/*" (change)="onFile($event)" />
+          <button type="button" class="btn btn-secondary btn-sm" (click)="generateAvatar()">
+            Generiši avatar
+          </button>
+          @if (avatarSvg()) {
+            <button type="button" class="btn btn-sm" (click)="saveAvatarAsImage()">
+              Sačuvaj kao profilnu sliku
+            </button>
+          }
+        </div>
+        @if (imagePreview()) {
+          <img [src]="imagePreview()" alt="pregled" width="96" height="96"
+               style="border-radius:8px;border:1px solid var(--border)" />
+        }
+      </div>
+      <p class="muted" style="font-size:0.8rem">
+        Ako ne dodate sliku, dobićete podrazumevani avatar.
+      </p>
+    </div>
+
+    <button class="btn" type="submit" [disabled]="loading()">
+      {{ loading() ? 'Slanje…' : 'Pošalji zahtev za registraciju' }}
+    </button>
+    <div class="auth-links"><a routerLink="/login">Već imate nalog? Prijavite se</a></div>
+  </form>
+</div>

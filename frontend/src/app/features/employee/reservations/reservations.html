@@ -1,0 +1,49 @@
+<h1>Rezervacije i treninzi</h1>
+@if (error()) { <div class="alert alert-error">{{ error() }}</div> }
+
+<section class="card" style="margin-bottom:1rem">
+  <h2>Rezervacije terena</h2>
+  @if (reservations().length) {
+    <table class="table">
+      <thead><tr><th>Korisnik</th><th>Objekat</th><th>Teren/Hala</th><th>Sport</th><th>Termin</th><th>Status</th><th>Akcije</th></tr></thead>
+      <tbody>
+        @for (r of reservations(); track r._id) {
+          <tr>
+            <td>{{ r.user?.firstName }} {{ r.user?.lastName }}</td>
+            <td>{{ r.facility?.name }}</td>
+            <td>{{ resourceName(r) }}</td>
+            <td>{{ r.sport }}</td>
+            <td>{{ r.start | date: 'dd.MM.yyyy HH:mm' }}</td>
+            <td><span class="badge badge-{{ r.status }}">{{ r.status }}</span></td>
+            <td>
+              @if (inWindow(r.start) && r.status !== 'confirmed' && r.status !== 'no_show') {
+                <button class="btn btn-sm btn-success" (click)="confirm(r)">Potvrdi</button>
+                <button class="btn btn-sm btn-danger" (click)="noShow(r)">Odjavi</button>
+              } @else { <span class="muted">—</span> }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else { <p class="muted">Nema rezervacija.</p> }
+</section>
+
+<section class="card">
+  <h2>Zakazani treninzi</h2>
+  @if (trainings().length) {
+    <table class="table">
+      <thead><tr><th>Korisnik</th><th>Trener</th><th>Objekat</th><th>Termin</th><th>Status</th></tr></thead>
+      <tbody>
+        @for (t of trainings(); track t._id) {
+          <tr>
+            <td>{{ t.user?.firstName }} {{ t.user?.lastName }}</td>
+            <td>{{ t.trainer?.name }}</td>
+            <td>{{ t.facility?.name }}</td>
+            <td>{{ t.start | date: 'dd.MM.yyyy HH:mm' }}</td>
+            <td><span class="badge badge-{{ t.status === 'completed' ? 'completed' : 'confirmed' }}">{{ t.status }}</span></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else { <p class="muted">Nema treninga.</p> }
+</section>

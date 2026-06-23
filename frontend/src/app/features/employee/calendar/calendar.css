@@ -1,0 +1,59 @@
+.cal-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+.cal-grid-wrap {
+  overflow-x: auto;
+}
+.cal-grid {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+  background: #fff;
+}
+.cal-grid th,
+.cal-grid td {
+  border: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.8rem;
+}
+.cal-grid th {
+  background: var(--brand-light);
+  color: var(--brand-dark);
+  padding: 0.3rem;
+}
+.hour-label {
+  background: #f4f7fa;
+  font-weight: 600;
+  width: 56px;
+}
+.cal-cell {
+  height: 38px;
+  min-width: 80px;
+  vertical-align: top;
+}
+.resv-card {
+  background: #5dade2;
+  color: #fff;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: 1px;
+  cursor: grab;
+  font-size: 0.75rem;
+}
+.resv-card:active {
+  cursor: grabbing;
+}
+.cdk-drag-preview {
+  background: #2f80c2;
+  color: #fff;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+}
+.cdk-drop-list-dragging .cal-cell {
+  background: #eef6fc;
+}

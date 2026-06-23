@@ -1,0 +1,75 @@
+<form class="card" [formGroup]="form" (ngSubmit)="search()" style="margin-bottom:1rem">
+  <div class="row">
+    <div class="form-group">
+      <label for="name">Naziv objekta</label>
+      <input id="name" formControlName="name" placeholder="npr. Arena" />
+    </div>
+    <div class="form-group">
+      <label for="sport">Vrsta sporta</label>
+      <select id="sport" formControlName="sport">
+        <option value="">Svi sportovi</option>
+        @for (s of sports(); track s._id) {
+          <option [value]="s.name">{{ s.name }}</option>
+        }
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="type">Tip terena</label>
+      <select id="type" formControlName="type">
+        <option value="">Svi</option>
+        <option value="open">Otvoreni</option>
+        <option value="closed">Zatvoreni</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Grad (više izbora — samo gradovi sa aktivnim objektima)</label>
+    <div class="chips">
+      @for (c of cities(); track c) {
+        <span class="chip" [class.selected]="selectedCities().includes(c)" (click)="toggleCity(c)">
+          {{ c }}
+        </span>
+      }
+      @if (!cities().length) { <span class="muted">Nema aktivnih gradova.</span> }
+    </div>
+  </div>
+
+  @if (showTodayFilter) {
+    <div class="form-group">
+      <label><input type="checkbox" formControlName="onlyFreeToday" style="width:auto" />
+        Samo slobodni termini danas</label>
+    </div>
+  }
+
+  <button class="btn" type="submit">Pretraži</button>
+</form>
+
+@if (searched()) {
+  @if (sorted().length) {
+    <table class="table">
+      <thead>
+        <tr>
+          <th (click)="setSort('name')">Naziv {{ arrow('name') }}</th>
+          <th (click)="setSort('city')">Grad {{ arrow('city') }}</th>
+          <th (click)="setSort('sport')">Sportovi {{ arrow('sport') }}</th>
+          <th>👍 / 👎</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (f of sorted(); track f._id) {
+          <tr>
+            <td>{{ f.name }}</td>
+            <td>{{ f.city }}</td>
+            <td>{{ f.sportNames.join(', ') }}</td>
+            <td>{{ f.likeCount }} / {{ f.dislikeCount }}</td>
+            <td><a class="btn btn-sm" [routerLink]="[detailsBase, f._id]">Detalji</a></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p class="muted">Nema rezultata za zadate kriterijume.</p>
+  }
+}

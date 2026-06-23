@@ -1,0 +1,47 @@
+<h1>Moj profil</h1>
+
+@if (message()) { <div class="alert alert-success">{{ message() }}</div> }
+@if (error()) { <div class="alert alert-error">{{ error() }}</div> }
+
+@if (user(); as u) {
+  <section class="card" style="margin-bottom:1rem">
+    <div class="row">
+      <div>
+        <img [src]="uploads + '/' + u.profileImage.replace('/uploads/','')" alt="profil"
+             width="120" height="120" style="border-radius:8px;border:1px solid var(--border)" />
+      </div>
+      <form [formGroup]="form" (ngSubmit)="save()" style="flex:3">
+        <div class="form-group">
+          <label>Korisničko ime</label>
+          <input [value]="u.username" disabled />
+        </div>
+        <div class="row">
+          <div class="form-group"><label>Ime</label><input formControlName="firstName" /></div>
+          <div class="form-group"><label>Prezime</label><input formControlName="lastName" /></div>
+        </div>
+        <div class="row">
+          <div class="form-group"><label>Telefon</label><input formControlName="phone" /></div>
+          <div class="form-group"><label>E-mejl</label><input formControlName="email" /></div>
+        </div>
+        <div class="form-group">
+          <label>Omiljeni sportovi (najviše 5)</label>
+          <div class="chips">
+            @for (s of sports(); track s._id) {
+              <span class="chip" [class.selected]="selectedSports().includes(s.name)" (click)="toggleSport(s.name)">
+                {{ s.name }}
+              </span>
+            }
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Promena profilne slike</label>
+          <input type="file" accept="image/*" (change)="onFile($event)" />
+        </div>
+        <button class="btn" type="submit">Sačuvaj</button>
+      </form>
+    </div>
+  </section>
+}
+
+<app-athlete-reservations />
+

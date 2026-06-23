@@ -1,0 +1,86 @@
+.cal-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.cal-grid-wrap {
+  overflow-x: auto;
+}
+
+.cal-grid {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+  background: #fff;
+}
+
+.cal-grid th,
+.cal-grid td {
+  border: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.cal-grid th {
+  background: var(--brand-light);
+  color: var(--brand-dark);
+  padding: 0.3rem;
+}
+
+.hour-label {
+  background: #f4f7fa;
+  font-weight: 600;
+  width: 56px;
+  white-space: nowrap;
+}
+
+.cal-cell {
+  height: 30px;
+  cursor: pointer;
+}
+.cal-cell.free {
+  background: #d5f5e3;
+}
+.cal-cell.free:hover {
+  background: #ade8c5;
+}
+.cal-cell.booked {
+  background: #fadbd8;
+  cursor: not-allowed;
+}
+.cal-cell.past {
+  background: #eceff1;
+  cursor: not-allowed;
+}
+.cal-cell.selected {
+  background: #5dade2 !important;
+  box-shadow: inset 0 0 0 2px var(--brand-dark);
+}
+
+.cal-legend {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+.cal-legend .sw {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  margin-right: 0.3rem;
+  vertical-align: middle;
+}
+.cal-legend .sw.free {
+  background: #d5f5e3;
+}
+.cal-legend .sw.booked {
+  background: #fadbd8;
+}
+.cal-legend .sw.selected {
+  background: #5dade2;
+}

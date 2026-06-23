@@ -1,0 +1,73 @@
+<h1>Oprema i porudžbine</h1>
+@if (error()) { <div class="alert alert-error">{{ error() }}</div> }
+
+<section class="card" style="margin-bottom:1rem">
+  <h2>Nova oprema</h2>
+  <div class="row">
+    <div class="form-group"><label>Naziv</label><input [(ngModel)]="form.name" /></div>
+    <div class="form-group"><label>Sport</label>
+      <select [(ngModel)]="form.sport">
+        <option value="">Izaberite</option>
+        @for (s of sports(); track s._id) { <option [value]="s.name">{{ s.name }}</option> }
+      </select>
+    </div>
+    <div class="form-group"><label>Objekat</label>
+      <select [(ngModel)]="form.facility">
+        <option value="">Izaberite</option>
+        @for (f of facilities(); track f._id) { <option [value]="f._id">{{ f.name }}</option> }
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group"><label>Cena</label><input type="number" [(ngModel)]="form.price" /></div>
+    <div class="form-group"><label>Zalihe</label><input type="number" [(ngModel)]="form.stock" /></div>
+    <div class="form-group"><label>Slika</label><input type="file" accept="image/*" (change)="onFile($event)" /></div>
+  </div>
+  <button class="btn" (click)="create()">Dodaj opremu</button>
+</section>
+
+<section class="card" style="margin-bottom:1rem">
+  <h2>Katalog</h2>
+  @if (equipment().length) {
+    <table class="table">
+      <thead><tr><th>Naziv</th><th>Sport</th><th>Cena</th><th>Zalihe</th><th></th></tr></thead>
+      <tbody>
+        @for (eq of equipment(); track eq._id) {
+          <tr>
+            <td>{{ eq.name }}</td>
+            <td>{{ eq.sport }}</td>
+            <td><input type="number" #p [value]="eq.price" style="width:90px" /></td>
+            <td><input type="number" #s [value]="eq.stock" style="width:70px" /></td>
+            <td><button class="btn btn-sm" (click)="updateStock(eq, +s.value, +p.value)">Sačuvaj</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else { <p class="muted">Nema opreme.</p> }
+</section>
+
+<section class="card">
+  <h2>Porudžbine</h2>
+  @if (orders().length) {
+    <table class="table">
+      <thead><tr><th>Datum</th><th>Kupac</th><th>Stavke</th><th>Ukupno</th><th>Status</th><th>Akcije</th></tr></thead>
+      <tbody>
+        @for (o of orders(); track o._id) {
+          <tr>
+            <td>{{ o.createdAt | date: 'dd.MM.yyyy' }}</td>
+            <td>{{ $any(o.user).firstName }} {{ $any(o.user).lastName }}</td>
+            <td>@for (it of o.items; track $index) { <div>{{ $any(it.equipment).name }} × {{ it.qty }}</div> }</td>
+            <td>{{ o.total }} RSD</td>
+            <td><span class="badge badge-{{ o.status === 'cancelled' ? 'cancelled' : o.status === 'picked_up' ? 'completed' : 'pending' }}">{{ o.status }}</span></td>
+            <td>
+              @if (o.status === 'ordered') {
+                <button class="btn btn-sm btn-success" (click)="setStatus(o, 'picked_up')">Preuzeto</button>
+                <button class="btn btn-sm btn-danger" (click)="setStatus(o, 'cancelled')">Otkaži</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else { <p class="muted">Nema porudžbina.</p> }
+</section>

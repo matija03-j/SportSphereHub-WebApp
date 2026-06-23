@@ -1,0 +1,40 @@
+<h1>Moj profil</h1>
+@if (message()) { <div class="alert alert-success">{{ message() }}</div> }
+
+@if (user(); as u) {
+  <section class="card" style="margin-bottom:1rem">
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="form-group"><label>Korisničko ime</label><input [value]="u.username" disabled /></div>
+      <div class="row">
+        <div class="form-group"><label>Ime</label><input formControlName="firstName" /></div>
+        <div class="form-group"><label>Prezime</label><input formControlName="lastName" /></div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label>Telefon</label><input formControlName="phone" /></div>
+        <div class="form-group"><label>E-mejl</label><input formControlName="email" /></div>
+      </div>
+      <div class="form-group"><label>Promena profilne slike</label><input type="file" accept="image/*" (change)="onFile($event)" /></div>
+      <button class="btn" type="submit">Sačuvaj</button>
+    </form>
+  </section>
+}
+
+<section class="card">
+  <h2>Objekti koje vodim</h2>
+  @if (facilities().length) {
+    <table class="table">
+      <thead><tr><th>Naziv</th><th>Grad</th><th>Sportovi</th><th>Tereni/Hale</th><th>Status</th></tr></thead>
+      <tbody>
+        @for (f of facilities(); track f._id) {
+          <tr>
+            <td>{{ f.name }}</td>
+            <td>{{ f.city }}</td>
+            <td>{{ sportNames(f) }}</td>
+            <td>{{ f.resources.length }}</td>
+            <td><span class="badge badge-{{ f.status === 'approved' ? 'confirmed' : 'pending' }}">{{ f.status }}</span></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else { <p class="muted">Nemate objekata.</p> }
+</section>

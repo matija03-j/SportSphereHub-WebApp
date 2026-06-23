@@ -1,0 +1,81 @@
+<h1>Moji objekti</h1>
+
+@if (message()) { <div class="alert alert-success">{{ message() }}</div> }
+@if (error()) { <div class="alert alert-error">{{ error() }}</div> }
+
+<section class="card" style="margin-bottom:1rem">
+  <h2>Novi objekat</h2>
+  <div class="row">
+    <div class="form-group"><label>Naziv</label><input [(ngModel)]="newFacility.name" /></div>
+    <div class="form-group"><label>Grad</label><input [(ngModel)]="newFacility.city" /></div>
+    <div class="form-group"><label>Adresa</label><input [(ngModel)]="newFacility.address" /></div>
+  </div>
+  <div class="row">
+    <div class="form-group"><label>Matični broj (8)</label><input [(ngModel)]="newFacility.maticniBroj" /></div>
+    <div class="form-group"><label>PIB (9)</label><input [(ngModel)]="newFacility.pib" /></div>
+    <div class="form-group"><label>Cena/sat</label><input type="number" [(ngModel)]="newFacility.pricePerHour" /></div>
+  </div>
+  <div class="row">
+    <div class="form-group"><label>Otvaranje</label><input type="time" [(ngModel)]="newFacility.workingHours.open" /></div>
+    <div class="form-group"><label>Zatvaranje</label><input type="time" [(ngModel)]="newFacility.workingHours.close" /></div>
+    <div class="form-group"><label>Dozvoljeni nedolasci</label><input type="number" [(ngModel)]="newFacility.maxNoShows" /></div>
+  </div>
+  <div class="form-group">
+    <label>Sportovi</label>
+    <div class="chips">
+      @for (s of sports(); track s._id) {
+        <span class="chip" [class.selected]="newFacility.sports.includes(s.name)" (click)="toggleSport(s.name)">{{ s.name }}</span>
+      }
+    </div>
+  </div>
+  <button class="btn" (click)="create()">Kreiraj objekat</button>
+
+  <div class="form-group" style="margin-top:1rem">
+    <label>...ili učitaj iz JSON fajla</label>
+    <input type="file" accept="application/json,.json" (change)="onJson($event)" />
+  </div>
+</section>
+
+@for (f of facilities(); track f._id) {
+  <section class="card" style="margin-bottom:1rem">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 style="margin:0">{{ f.name }} <span class="muted">({{ f.city }})</span></h2>
+      <span class="badge badge-{{ f.status === 'approved' ? 'confirmed' : 'pending' }}">{{ f.status }}</span>
+    </div>
+    <p class="muted">{{ f.address }} · {{ f.pricePerHour }} RSD/sat · {{ f.workingHours.open }}–{{ f.workingHours.close }}</p>
+
+    <table class="table">
+      <thead><tr><th>Naziv</th><th>Tip</th><th>Kapacitet</th><th>Sport</th></tr></thead>
+      <tbody>
+        @for (r of f.resources; track r._id) {
+          <tr><td>{{ r.name }}</td><td>{{ r.type }}</td><td>{{ r.capacity }}</td><td>{{ r.sport }}</td></tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="card" style="margin-top:0.5rem">
+      <h3>Dodaj teren/halu</h3>
+      <div class="row">
+        <div class="form-group"><label>Naziv</label><input [(ngModel)]="ensureResource(f._id).name" /></div>
+        <div class="form-group"><label>Tip</label>
+          <select [(ngModel)]="ensureResource(f._id).type">
+            <option value="open">Otvoreni teren</option>
+            <option value="closed">Zatvoreni teren</option>
+            <option value="hall">Dvorana</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Kapacitet</label><input type="number" [(ngModel)]="ensureResource(f._id).capacity" /></div>
+        <div class="form-group"><label>Sport</label>
+          <select [(ngModel)]="ensureResource(f._id).sport">
+            <option value="">Izaberite</option>
+            @for (s of sports(); track s._id) { <option [value]="s.name">{{ s.name }}</option> }
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Opis opreme (do 300)</label>
+        <textarea rows="2" maxlength="300" [(ngModel)]="ensureResource(f._id).equipmentDescription"></textarea>
+      </div>
+      <button class="btn btn-sm" (click)="addResource(f)">Dodaj</button>
+    </div>
+  </section>
+}

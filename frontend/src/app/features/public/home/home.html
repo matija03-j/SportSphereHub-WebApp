@@ -1,0 +1,42 @@
+<section class="card" style="margin-bottom:1rem">
+  <h1>SportSphere Hub</h1>
+  <p class="muted">Rezervišite terene i hale, zakažite treninge, kupujte opremu i pronađite saigrače.</p>
+  @if (info(); as i) {
+    <p><strong>{{ i.activeCount }}</strong> aktivnih sportskih objekata u sistemu.</p>
+  }
+</section>
+
+@if (info(); as i) {
+  <div class="row" style="margin-bottom:1rem">
+    <section class="card">
+      <h2>TOP 3 objekta</h2>
+      @if (i.top3.length) {
+        <ol>
+          @for (f of i.top3; track f._id) {
+            <li>{{ f.name }} <span class="muted">({{ f.city }})</span> — 👍 {{ f.likeCount }}</li>
+          }
+        </ol>
+      } @else { <p class="muted">Još nema ocenjenih objekata.</p> }
+    </section>
+
+    <section class="card">
+      <h2>Aktuelne promocije</h2>
+      @if (i.promotions.length) {
+        <ul>
+          @for (p of i.promotions; track p._id) {
+            <li>
+              <strong>{{ p.name }}</strong> — {{ $any(p.facility).name }}
+              <span class="badge badge-confirmed">{{ discount(p) }}</span>
+              <div class="muted" style="font-size:0.8rem">
+                {{ p.startDate | date: 'dd.MM.yyyy' }} – {{ p.endDate | date: 'dd.MM.yyyy' }}
+              </div>
+            </li>
+          }
+        </ul>
+      } @else { <p class="muted">Trenutno nema aktivnih promocija.</p> }
+    </section>
+  </div>
+}
+
+<h2>Pretraga objekata</h2>
+<app-facility-search />

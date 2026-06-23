@@ -1,0 +1,246 @@
+/* SportSphere Hub — global uniform styles */
+:root {
+  --brand: #2f80c2;
+  --brand-dark: #143a5a;
+  --brand-light: #e8f1f9;
+  --ok: #27ae60;
+  --warn: #e67e22;
+  --danger: #e74c3c;
+  --text: #1f2d3d;
+  --muted: #6b7c8f;
+  --border: #d6dee6;
+  --bg: #f4f7fa;
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--brand-dark);
+  margin-top: 0;
+}
+
+a {
+  color: var(--brand);
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: var(--brand);
+  color: #fff;
+  text-decoration: none;
+}
+.btn:hover {
+  background: #2670ad;
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.btn-secondary {
+  background: #6b7c8f;
+}
+.btn-secondary:hover {
+  background: #5a6b7d;
+}
+.btn-success {
+  background: var(--ok);
+}
+.btn-danger {
+  background: var(--danger);
+}
+.btn-danger:hover {
+  background: #c0392b;
+}
+.btn-sm {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+/* Cards */
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: #fff;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--brand);
+  border-color: var(--brand);
+}
+.field-error {
+  color: var(--danger);
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
+}
+
+/* Tables */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.table th,
+.table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.table th {
+  background: var(--brand-light);
+  color: var(--brand-dark);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.table tbody tr:hover {
+  background: #f7fafc;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.badge-pending {
+  background: #fdebd0;
+  color: #a05a00;
+}
+.badge-confirmed {
+  background: #d5f5e3;
+  color: #1e7e44;
+}
+.badge-cancelled,
+.badge-no_show {
+  background: #fadbd8;
+  color: #a93226;
+}
+.badge-completed {
+  background: #e2e8f0;
+  color: #3a4a5a;
+}
+
+/* Layout helpers */
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+.alert-error {
+  background: #fadbd8;
+  color: #a93226;
+}
+.alert-success {
+  background: #d5f5e3;
+  color: #1e7e44;
+}
+.muted {
+  color: var(--muted);
+}
+
+/* Auth pages */
+.auth-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+}
+.auth-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Chips (multi-select sports, tags) */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: var(--brand-light);
+  color: var(--brand-dark);
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.chip.selected {
+  background: var(--brand);
+  color: #fff;
+}
+.row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.row > * {
+  flex: 1;
+  min-width: 200px;
+}

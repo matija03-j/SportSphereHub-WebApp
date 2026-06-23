@@ -1,0 +1,34 @@
+<div class="auth-wrap">
+  <form class="card auth-card" [formGroup]="form" (ngSubmit)="submit()">
+    <h1>Prijava</h1>
+
+    @if (error()) {
+      <div class="alert alert-error">{{ error() }}</div>
+    }
+
+    <div class="form-group">
+      <label for="username">Korisničko ime</label>
+      <input id="username" type="text" formControlName="username" autocomplete="username" />
+      @if (form.controls.username.touched && form.controls.username.invalid) {
+        <div class="field-error">Korisničko ime je obavezno.</div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="password">Lozinka</label>
+      <input id="password" type="password" formControlName="password" autocomplete="current-password" />
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <div class="field-error">Lozinka je obavezna.</div>
+      }
+    </div>
+
+    <button class="btn" type="submit" [disabled]="loading()">
+      {{ loading() ? 'Prijavljivanje…' : 'Prijavi se' }}
+    </button>
+
+    <div class="auth-links">
+      <a routerLink="/forgot-password">Zaboravili ste lozinku?</a>
+      <a routerLink="/register">Nemate nalog? Registrujte se</a>
+    </div>
+  </form>
+</div>

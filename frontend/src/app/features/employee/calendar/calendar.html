@@ -1,0 +1,77 @@
+<h1>Interaktivni kalendar</h1>
+@if (message()) { <div class="alert alert-success">{{ message() }}</div> }
+@if (error()) { <div class="alert alert-error">{{ error() }}</div> }
+
+<section class="card" style="margin-bottom:1rem">
+  <div class="row">
+    <div class="form-group">
+      <label>Objekat</label>
+      <select [(ngModel)]="facilityId" (change)="onFacilityChange()">
+        <option value="">Izaberite objekat</option>
+        @for (f of facilities(); track f._id) { <option [value]="f._id">{{ f.name }}</option> }
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Teren / Hala</label>
+      <select [(ngModel)]="resourceId" (change)="onResourceChange()" [disabled]="!facilityId">
+        <option value="">Izaberite</option>
+        @for (r of selectedFacility()?.resources || []; track r._id) {
+          <option [value]="r._id">{{ r.name }} ({{ r.type }})</option>
+        }
+      </select>
+    </div>
+  </div>
+  @if (resourceId && !isMovable()) {
+    <p class="muted">Napomena: prevlačenje termina je dozvoljeno samo za zatvorene hale/dvorane.</p>
+  }
+</section>
+
+@if (resourceId) {
+  <section class="card">
+    <div class="cal-controls">
+      <button class="btn btn-sm btn-secondary" (click)="shiftWeek(-1)">‹ Prethodna</button>
+      <strong>{{ weekStart() | date: 'dd.MM.' }} – {{ dayDate(6) | date: 'dd.MM.yyyy.' }}</strong>
+      <button class="btn btn-sm btn-secondary" (click)="shiftWeek(1)">Sledeća ›</button>
+    </div>
+
+    <div class="cal-grid-wrap" cdkDropListGroup>
+      <table class="cal-grid">
+        <thead>
+          <tr>
+            <th></th>
+            @for (d of days; track $index) {
+              <th>{{ d }}<br /><span class="muted">{{ dayDate($index) | date: 'dd.MM' }}</span></th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (h of hours; track h) {
+            <tr>
+              <td class="hour-label">{{ h }}:00</td>
+              @for (d of days; track $index) {
+                @let c = cell($index, h);
+                <td
+                  class="cal-cell"
+                  cdkDropList
+                  [cdkDropListData]="c.start"
+                  (cdkDropListDropped)="drop($event, c.start)"
+                >
+                  @if (c.reservation) {
+                    <div
+                      class="resv-card"
+                      cdkDrag
+                      [cdkDragData]="c.reservation"
+                      [cdkDragDisabled]="!isMovable()"
+                    >
+                      Rezervacija
+                    </div>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+}

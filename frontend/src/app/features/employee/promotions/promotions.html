@@ -1,0 +1,53 @@
+<h1>Promocije</h1>
+@if (error()) { <div class="alert alert-error">{{ error() }}</div> }
+
+<section class="card" style="margin-bottom:1rem">
+  <h2>Nova promocija</h2>
+  <div class="row">
+    <div class="form-group"><label>Naziv</label><input [(ngModel)]="form.name" /></div>
+    <div class="form-group"><label>Objekat</label>
+      <select [(ngModel)]="form.facility">
+        <option value="">Izaberite</option>
+        @for (f of facilities(); track f._id) { <option [value]="f._id">{{ f.name }}</option> }
+      </select>
+    </div>
+    <div class="form-group"><label>Sport</label>
+      <select [(ngModel)]="form.sport">
+        <option value="">Svi</option>
+        @for (s of sports(); track s._id) { <option [value]="s.name">{{ s.name }}</option> }
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group"><label>Od</label><input type="date" [(ngModel)]="form.startDate" /></div>
+    <div class="form-group"><label>Do</label><input type="date" [(ngModel)]="form.endDate" /></div>
+    <div class="form-group"><label>Tip</label>
+      <select [(ngModel)]="form.discountType">
+        <option value="percent">Procenat</option>
+        <option value="fixed">Fiksni</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Vrednost</label><input type="number" [(ngModel)]="form.value" /></div>
+  </div>
+  <button class="btn" (click)="create()">Kreiraj</button>
+</section>
+
+<section class="card">
+  <h2>Postojeće promocije</h2>
+  @if (promotions().length) {
+    <table class="table">
+      <thead><tr><th>Naziv</th><th>Objekat</th><th>Period</th><th>Popust</th><th></th></tr></thead>
+      <tbody>
+        @for (p of promotions(); track p._id) {
+          <tr>
+            <td>{{ p.name }}</td>
+            <td>{{ $any(p.facility).name }}</td>
+            <td>{{ p.startDate | date: 'dd.MM.yyyy' }} – {{ p.endDate | date: 'dd.MM.yyyy' }}</td>
+            <td>{{ p.value }}{{ p.discountType === 'percent' ? '%' : ' RSD' }}</td>
+            <td><button class="btn btn-sm btn-danger" (click)="remove(p)">Obriši</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else { <p class="muted">Nema promocija.</p> }
+</section>

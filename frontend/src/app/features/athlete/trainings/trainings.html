@@ -1,0 +1,65 @@
+<h1>Individualni treninzi</h1>
+
+@if (message()) { <div class="alert alert-success">{{ message() }}</div> }
+@if (error()) { <div class="alert alert-error">{{ error() }}</div> }
+
+<section class="card" style="margin-bottom:1rem">
+  <h2>Treneri</h2>
+  <div class="form-group" style="max-width:280px">
+    <label>Filter po sportu</label>
+    <select [(ngModel)]="sportFilter" (change)="loadTrainers()">
+      <option value="">Svi sportovi</option>
+      @for (s of sports(); track s._id) { <option [value]="s.name">{{ s.name }}</option> }
+    </select>
+  </div>
+
+  @if (trainers().length) {
+    <table class="table">
+      <thead><tr><th>Ime</th><th>Specijalizacija</th><th>Objekat</th><th>Sport</th><th>Cena/sat</th><th></th></tr></thead>
+      <tbody>
+        @for (t of trainers(); track t._id) {
+          <tr>
+            <td>{{ t.name }}</td>
+            <td>{{ t.specialization }}</td>
+            <td>{{ $any(t.facility).name }}</td>
+            <td>{{ t.sport }}</td>
+            <td>{{ t.pricePerHour }} RSD</td>
+            <td><button class="btn btn-sm" (click)="startBooking(t)">Zakaži</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else { <p class="muted">Nema dostupnih trenera.</p> }
+
+  @if (bookingFor(); as t) {
+    <div class="card" style="margin-top:1rem">
+      <h3>Zakazivanje — {{ t.name }}</h3>
+      <div class="row">
+        <div class="form-group"><label>Početak</label><input type="datetime-local" [(ngModel)]="bookStart" /></div>
+        <div class="form-group"><label>Trajanje (sati)</label><input type="number" min="1" [(ngModel)]="bookDuration" /></div>
+      </div>
+      <button class="btn" (click)="book()">Potvrdi termin</button>
+      <button class="btn btn-secondary" (click)="bookingFor.set(null)">Otkaži</button>
+    </div>
+  }
+</section>
+
+<section class="card">
+  <h2>Arhiva treninga</h2>
+  @if (mine().length) {
+    <table class="table">
+      <thead><tr><th>Trener</th><th>Objekat</th><th>Sport</th><th>Termin</th><th>Status</th></tr></thead>
+      <tbody>
+        @for (t of mine(); track t._id) {
+          <tr>
+            <td>{{ $any(t.trainer).name }}</td>
+            <td>{{ $any(t.facility).name }}</td>
+            <td>{{ t.sport }}</td>
+            <td>{{ t.start | date: 'dd.MM.yyyy HH:mm' }}</td>
+            <td><span class="badge badge-{{ t.status === 'completed' ? 'completed' : 'confirmed' }}">{{ t.status }}</span></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else { <p class="muted">Nemate zakazanih treninga.</p> }
+</section>

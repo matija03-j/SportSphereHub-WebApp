@@ -1,0 +1,56 @@
+@if (notFound()) {
+  <div class="alert alert-error">Objekat nije pronađen ili nije dostupan.</div>
+  <a class="btn" routerLink="/">Početna</a>
+} @else if (facility(); as f) {
+  <section class="card" style="margin-bottom:1rem">
+    <h1>{{ f.name }}</h1>
+    <p class="muted">{{ f.city }} — {{ f.address }}</p>
+    <p>👍 {{ f.likeCount }} &nbsp; 👎 {{ f.dislikeCount }}</p>
+    <p><strong>Cena:</strong> {{ f.pricePerHour }} RSD / sat &nbsp;|&nbsp;
+       <strong>Radno vreme:</strong> {{ f.workingHours.open }}–{{ f.workingHours.close }}</p>
+    @if (f.description) { <p>{{ f.description }}</p> }
+  </section>
+
+  <section class="card" style="margin-bottom:1rem">
+    <h2>Tereni i hale</h2>
+    <table class="table">
+      <thead><tr><th>Naziv</th><th>Tip</th><th>Kapacitet</th><th>Sport</th><th>Oprema</th></tr></thead>
+      <tbody>
+        @for (r of f.resources; track r._id) {
+          <tr>
+            <td>{{ r.name }}</td>
+            <td>{{ typeLabel[r.type] || r.type }}</td>
+            <td>{{ r.capacity }}</td>
+            <td>{{ r.sport }}</td>
+            <td class="muted">{{ r.equipmentDescription }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+
+  @if (f.images.length) {
+    <section class="card" style="margin-bottom:1rem">
+      <h2>Galerija</h2>
+      <div class="row">
+        @for (img of f.images; track img) {
+          <img [src]="uploads + '/' + img" alt="slika" style="max-width:200px;border-radius:8px" />
+        }
+      </div>
+    </section>
+  }
+
+  <section class="card">
+    <h2>Poslednji komentari</h2>
+    @if (f.recentReviews.length) {
+      @for (rev of f.recentReviews; track rev._id) {
+        <div style="border-bottom:1px solid var(--border);padding:0.5rem 0">
+          <strong>{{ $any(rev.user).firstName }} {{ $any(rev.user).lastName }}</strong>
+          <span>{{ rev.reaction === 'like' ? '👍' : '👎' }}</span>
+          <span class="muted" style="font-size:0.8rem"> · {{ rev.createdAt | date: 'dd.MM.yyyy' }}</span>
+          <div>{{ rev.comment }}</div>
+        </div>
+      }
+    } @else { <p class="muted">Još nema komentara.</p> }
+  </section>
+}

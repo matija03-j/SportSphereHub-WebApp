@@ -1,0 +1,36 @@
+<section class="card">
+  <h2>Moje rezervacije</h2>
+  @if (error()) { <div class="alert alert-error">{{ error() }}</div> }
+  @if (sortedReservations().length) {
+    <table class="table">
+      <thead>
+        <tr>
+          <th (click)="setSort('facilityName')">Objekat {{ arrow('facilityName') }}</th>
+          <th (click)="setSort('city')">Grad {{ arrow('city') }}</th>
+          <th (click)="setSort('resourceName')">Teren/Hala {{ arrow('resourceName') }}</th>
+          <th (click)="setSort('sportName')">Sport {{ arrow('sportName') }}</th>
+          <th (click)="setSort('start')">Termin {{ arrow('start') }}</th>
+          <th (click)="setSort('status')">Status {{ arrow('status') }}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of sortedReservations(); track r._id) {
+          <tr>
+            <td>{{ r.facilityName }}</td>
+            <td>{{ r.city }}</td>
+            <td>{{ r.resourceName }}</td>
+            <td>{{ r.sportName }}</td>
+            <td>{{ r.start | date: 'dd.MM.yyyy HH:mm' }} – {{ r.end | date: 'HH:mm' }}</td>
+            <td><span class="badge badge-{{ r.status }}">{{ r.status }}</span></td>
+            <td>
+              @if (canCancel(r)) {
+                <button class="btn btn-sm btn-danger" (click)="cancel(r)">Otkaži</button>
+              } @else { <span class="muted">—</span> }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else { <p class="muted">Nemate rezervacija.</p> }
+</section>

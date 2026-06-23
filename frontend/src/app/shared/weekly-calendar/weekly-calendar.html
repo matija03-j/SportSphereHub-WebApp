@@ -1,0 +1,42 @@
+<div class="cal-controls">
+  <button class="btn btn-sm btn-secondary" (click)="shiftWeek(-1)">‹ Prethodna</button>
+  <strong>{{ weekStart() | date: 'dd.MM.' }} – {{ dayDate(6) | date: 'dd.MM.yyyy.' }}</strong>
+  <button class="btn btn-sm btn-secondary" (click)="shiftWeek(1)">Sledeća ›</button>
+</div>
+
+<div class="cal-grid-wrap">
+  <table class="cal-grid">
+    <thead>
+      <tr>
+        <th></th>
+        @for (d of days; track $index) {
+          <th>{{ d }}<br /><span class="muted">{{ dayDate($index) | date: 'dd.MM' }}</span></th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (h of hours; track h) {
+        <tr>
+          <td class="hour-label">{{ h }}:00</td>
+          @for (d of days; track $index) {
+            @let c = cell($index, h);
+            <td
+              class="cal-cell"
+              [class.booked]="c.booked"
+              [class.past]="c.past && !c.booked"
+              [class.free]="!c.booked && !c.past"
+              [class.selected]="isSelected(c)"
+              (click)="pick(c)"
+            ></td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<div class="cal-legend">
+  <span><i class="sw free"></i> Slobodno</span>
+  <span><i class="sw booked"></i> Zauzeto</span>
+  <span><i class="sw selected"></i> Vaš izbor</span>
+</div>

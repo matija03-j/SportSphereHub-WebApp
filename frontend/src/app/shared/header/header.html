@@ -1,0 +1,47 @@
+<header class="app-header">
+  <a class="brand" routerLink="/">
+    <span class="brand-mark">🏆</span> SportSphere Hub
+  </a>
+
+  <nav class="nav">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Početna</a>
+
+    @if (!isLoggedIn()) {
+      <a routerLink="/login" routerLinkActive="active">Prijava</a>
+      <a routerLink="/register" routerLinkActive="active">Registracija</a>
+    }
+
+    @if (role() === 'athlete') {
+      <a routerLink="/athlete/search" routerLinkActive="active">Pretraga</a>
+      <a routerLink="/athlete/reservations" routerLinkActive="active">Rezervacije</a>
+      <a routerLink="/athlete/teammates" routerLinkActive="active">Saigrači</a>
+      <a routerLink="/athlete/trainings" routerLinkActive="active">Treninzi</a>
+      <a routerLink="/athlete/shop" routerLinkActive="active">Prodavnica</a>
+      <a routerLink="/athlete/statistics" routerLinkActive="active">Statistika</a>
+      <a routerLink="/athlete/profile" routerLinkActive="active">Profil</a>
+    }
+
+    @if (role() === 'employee') {
+      <a routerLink="/employee/facilities" routerLinkActive="active">Objekti</a>
+      <a routerLink="/employee/reservations" routerLinkActive="active">Rezervacije</a>
+      <a routerLink="/employee/calendar" routerLinkActive="active">Kalendar</a>
+      <a routerLink="/employee/promotions" routerLinkActive="active">Promocije</a>
+      <a routerLink="/employee/equipment" routerLinkActive="active">Oprema</a>
+      <a routerLink="/employee/reports" routerLinkActive="active">Izveštaji</a>
+      <a routerLink="/employee/profile" routerLinkActive="active">Profil</a>
+    }
+
+    @if (role() === 'admin') {
+      <a routerLink="/admin/users" routerLinkActive="active">Korisnici</a>
+      <a routerLink="/admin/requests" routerLinkActive="active">Zahtevi</a>
+      <a routerLink="/admin/facilities" routerLinkActive="active">Objekti</a>
+      <a routerLink="/admin/trainers" routerLinkActive="active">Treneri</a>
+      <a routerLink="/admin/sports" routerLinkActive="active">Sportovi</a>
+    }
+
+    @if (isLoggedIn()) {
+      <span class="user-name">{{ user()?.firstName }} {{ user()?.lastName }}</span>
+      <button class="logout-btn" (click)="logout()">Izloguj se</button>
+    }
+  </nav>
+</header>

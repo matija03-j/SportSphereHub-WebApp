@@ -1,0 +1,49 @@
+<h1>Upravljanje korisnicima</h1>
+
+<section class="card">
+  <div class="form-group" style="max-width:240px">
+    <label>Filter po ulozi</label>
+    <select [(ngModel)]="roleFilter" (change)="load()">
+      <option value="">Svi</option>
+      <option value="athlete">Sportisti</option>
+      <option value="employee">Zaposleni</option>
+      <option value="admin">Administratori</option>
+    </select>
+  </div>
+
+  <table class="table">
+    <thead><tr><th>Korisnik</th><th>Ime</th><th>Email</th><th>Uloga</th><th>Status</th><th>Akcije</th></tr></thead>
+    <tbody>
+      @for (u of users(); track u._id) {
+        <tr>
+          <td>{{ u.username }}</td>
+          @if (editing() === u._id) {
+            <td><input [(ngModel)]="draft.firstName" style="width:80px" /> <input [(ngModel)]="draft.lastName" style="width:80px" /></td>
+            <td><input [(ngModel)]="draft.email" /></td>
+            <td>{{ u.role }}</td>
+            <td>
+              <select [(ngModel)]="draft.status">
+                <option value="approved">approved</option>
+                <option value="pending">pending</option>
+                <option value="rejected">rejected</option>
+              </select>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-success" (click)="save(u)">Sačuvaj</button>
+              <button class="btn btn-sm btn-secondary" (click)="editing.set(null)">Otkaži</button>
+            </td>
+          } @else {
+            <td>{{ u.firstName }} {{ u.lastName }}</td>
+            <td>{{ u.email }}</td>
+            <td>{{ u.role }}</td>
+            <td><span class="badge badge-{{ u.status === 'approved' ? 'confirmed' : u.status === 'pending' ? 'pending' : 'cancelled' }}">{{ u.status }}</span></td>
+            <td>
+              <button class="btn btn-sm" (click)="edit(u)">Izmeni</button>
+              @if (u.role !== 'admin') { <button class="btn btn-sm btn-danger" (click)="remove(u)">Obriši</button> }
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>

@@ -1,0 +1,85 @@
+@if (facility(); as f) {
+  <section class="card" style="margin-bottom:1rem">
+    <h1>{{ f.name }}</h1>
+    <p class="muted">{{ f.city }} — {{ f.address }}</p>
+    <p><strong>{{ f.pricePerHour }} RSD / sat</strong> · Radno vreme {{ f.workingHours.open }}–{{ f.workingHours.close }}
+       · 👍 {{ f.likeCount }} 👎 {{ f.dislikeCount }}</p>
+    @if (f.description) { <p>{{ f.description }}</p> }
+  </section>
+
+  @if (message()) { <div class="alert alert-success">{{ message() }}</div> }
+  @if (error()) { <div class="alert alert-error">{{ error() }}</div> }
+
+  <div class="row" style="align-items:flex-start">
+    <section class="card" style="flex:2">
+      <h2>Lokacija</h2>
+      <div id="facility-map" style="height:300px;border-radius:8px"></div>
+    </section>
+
+    <section class="card" style="flex:1">
+      <h2>Rezervacija</h2>
+      <div class="form-group">
+        <label>Teren / Hala</label>
+        <div class="cal-controls">
+          <button class="btn btn-sm btn-secondary" (click)="rotate(-1)">‹</button>
+          <strong>{{ currentResource?.name }}
+            <span class="muted">({{ typeLabel[currentResource?.type || ''] }})</span></strong>
+          <button class="btn btn-sm btn-secondary" (click)="rotate(1)">›</button>
+        </div>
+      </div>
+      @if (selectedSlot(); as slot) {
+        <p>Izabran termin: <strong>{{ slot | date: 'dd.MM.yyyy HH:mm' }}</strong></p>
+        <div class="form-group">
+          <label>Trajanje (sati)</label>
+          <input type="number" min="1" [(ngModel)]="duration" />
+        </div>
+        <button class="btn" (click)="reserve()">Rezerviši</button>
+      } @else {
+        <p class="muted">Izaberite slobodan termin u kalendaru ispod.</p>
+      }
+    </section>
+  </div>
+
+  <section class="card" style="margin:1rem 0">
+    <h2>Nedeljni kalendar — {{ currentResource?.name }}</h2>
+    @if (currentResource; as r) {
+      <app-weekly-calendar
+        [facilityId]="f._id"
+        [resourceId]="r._id"
+        [openHour]="openHour"
+        [closeHour]="closeHour"
+        (slotSelected)="onSlot($event)"
+      />
+    }
+  </section>
+
+  <section class="card">
+    <h2>Ocene i komentari</h2>
+    <div class="form-group">
+      <label>Vaša reakcija</label>
+      <select [(ngModel)]="reviewReaction">
+        <option value="like">👍 Sviđa mi se</option>
+        <option value="dislike">👎 Ne sviđa mi se</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Komentar</label>
+      <textarea rows="2" [(ngModel)]="reviewComment"></textarea>
+    </div>
+    <button class="btn" (click)="submitReview()">Pošalji ocenu</button>
+    <p class="muted" style="font-size:0.8rem">
+      Ocenjivanje je moguće samo ako ste imali potvrđenu rezervaciju u ovom objektu.
+    </p>
+
+    <h3 style="margin-top:1rem">Poslednji komentari</h3>
+    @if (f.recentReviews.length) {
+      @for (rev of f.recentReviews; track rev._id) {
+        <div style="border-bottom:1px solid var(--border);padding:0.4rem 0">
+          <strong>{{ $any(rev.user).firstName }} {{ $any(rev.user).lastName }}</strong>
+          {{ rev.reaction === 'like' ? '👍' : '👎' }}
+          <div>{{ rev.comment }}</div>
+        </div>
+      }
+    } @else { <p class="muted">Još nema komentara.</p> }
+  </section>
+}
