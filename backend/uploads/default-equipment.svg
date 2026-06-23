@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#e8f1f9"/>
+  <circle cx="100" cy="100" r="56" fill="none" stroke="#2f80c2" stroke-width="8"/>
+  <path d="M100 44v112M44 100h112" stroke="#2f80c2" stroke-width="8"/>
+  <text x="100" y="186" font-family="Segoe UI, Arial" font-size="16" fill="#143a5a" text-anchor="middle">Oprema</text>
+</svg>
