@@ -1,14 +1,14 @@
-import { Schema, model, Document, Types } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
 export interface IPasswordResetToken extends Document {
-  user: Types.ObjectId;
+  user: string; // username
   token: string;
   expiresAt: Date;
 }
 
 const passwordResetTokenSchema = new Schema<IPasswordResetToken>(
   {
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    user: { type: String, required: true }, // username
     token: { type: String, required: true, unique: true },
     expiresAt: { type: Date, required: true },
   },

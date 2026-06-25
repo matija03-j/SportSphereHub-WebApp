@@ -5,5 +5,21 @@ uploads/*
 !uploads/.gitkeep
 !uploads/default-avatar.svg
 !uploads/default-equipment.svg
+!uploads/facility-sample-1.svg
+!uploads/facility-sample-2.svg
+!uploads/default-avatar.png
+!uploads/Fudbalska-lopta.png
+!uploads/kopacke.png
+!uploads/teniski-reket.png
+!uploads/kosarkaska-lopta.png
+!uploads/odbojka-lopta.png
+!uploads/sportska-torba.png
+!uploads/sc-beograd1.png
+!uploads/sc-beograd2.png
+!uploads/novi-sad1.png
+!uploads/novi-sad2.png
+!uploads/cair-nis.png
+!uploads/cair-nis1.png
 D:\faks\pia\projekat\SportSphere Hub\.claude
 D:\faks\pia\projekat\SportSphere Hub\CLAUDE.md
+.env.example

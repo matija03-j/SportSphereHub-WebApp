@@ -7,6 +7,9 @@ import {
   createFacilityFromJson,
   updateFacility,
   addResource,
+  updateResource,
+  addFacilityImages,
+  removeFacilityImage,
   facilityReservations,
   confirmReservation,
   noShowReservation,
@@ -32,6 +35,9 @@ employeeRouter.post('/facilities', createFacility);
 employeeRouter.post('/facilities/json', uploadJson.single('file'), createFacilityFromJson);
 employeeRouter.patch('/facilities/:id', updateFacility);
 employeeRouter.post('/facilities/:id/resources', addResource);
+employeeRouter.patch('/facilities/:id/resources/:resourceId', updateResource);
+employeeRouter.post('/facilities/:id/images', uploadImage.array('images', 10), addFacilityImages);
+employeeRouter.delete('/facilities/:id/images/:filename', removeFacilityImage);
 
 // Reservations & trainings
 employeeRouter.get('/reservations', facilityReservations);

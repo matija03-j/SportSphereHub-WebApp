@@ -91,7 +91,7 @@ async function run() {
     lastName: 'Administrator',
     phone: '0600000000',
     email: 'admin@sportsphere.rs',
-    profileImage: '/uploads/default-avatar.svg',
+    profileImage: '/uploads/default-avatar.png',
     sports: [],
     role: 'admin',
     status: 'approved',
@@ -106,7 +106,7 @@ async function run() {
       lastName: last,
       phone: '06' + Math.floor(10000000 + Math.random() * 89999999),
       email,
-      profileImage: '/uploads/default-avatar.svg',
+      profileImage: '/uploads/default-avatar.png',
       sports: sportList,
       role: 'athlete',
       status,
@@ -121,7 +121,7 @@ async function run() {
       lastName: last,
       phone: '06' + Math.floor(10000000 + Math.random() * 89999999),
       email,
-      profileImage: '/uploads/default-avatar.svg',
+      profileImage: '/uploads/default-avatar.png',
       sports: [],
       role: 'employee',
       status,
@@ -168,8 +168,9 @@ async function run() {
     workingHours: { open: '08:00', close: '22:00' },
     maxNoShows: 3,
     sports: [S['Fudbal'], S['Tenis'], S['Košarka']],
+    location: { lat: 44.8125, lng: 20.4612 },
     description: 'Moderan sportski centar u centru grada sa terenima i halama.',
-    images: [],
+    images: ['sc-beograd1.png', 'sc-beograd2.png'],
     likes: [a1.username, a2.username, a3.username],
     dislikes: [],
     resources: [
@@ -192,8 +193,9 @@ async function run() {
     workingHours: { open: '09:00', close: '23:00' },
     maxNoShows: 2,
     sports: [S['Odbojka'], S['Rukomet'], S['Mali fudbal']],
+    location: { lat: 45.2517, lng: 19.8369 },
     description: 'Višenamenska arena sa zatvorenim halama.',
-    images: [],
+    images: ['novi-sad1.png', 'novi-sad2.png'],
     likes: [a2.username, a4.username],
     dislikes: [a1.username],
     resources: [
@@ -216,8 +218,9 @@ async function run() {
     workingHours: { open: '08:00', close: '21:00' },
     maxNoShows: 3,
     sports: [S['Tenis'], S['Košarka']],
+    location: { lat: 43.3247, lng: 21.9033 },
     description: 'Sportski kompleks Čair.',
-    images: [],
+    images: ['cair-nis.png', 'cair-nis1.png'],
     likes: [a3.username],
     dislikes: [],
     resources: [
@@ -240,6 +243,7 @@ async function run() {
     workingHours: { open: '08:00', close: '22:00' },
     maxNoShows: 3,
     sports: [S['Fudbal']],
+    location: { lat: 44.0128, lng: 20.9114 },
     description: 'Novi objekat koji čeka odobrenje administratora.',
     images: [],
     likes: [],
@@ -261,6 +265,14 @@ async function run() {
     end: new Date(start.getTime() + durH * 3600 * 1000),
     status,
   });
+
+  // Fixed weekday/hour slots in the current week (for the employee calendar demo).
+  const thisWeekAt = (offsetDays, hour) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() + offsetDays);
+    d.setHours(hour, 0, 0, 0);
+    return d;
+  };
 
   const reservations = [
     // Past completed (enables reviews for a1 & a2 at Beograd)
@@ -287,6 +299,9 @@ async function run() {
     r(fNoviSad, fNoviSad.resources[0], a1, S['Mali fudbal'], hourSlot(6), 1, 'pending'),
     // A cancelled one
     r(fNis, fNis.resources[1], a2, S['Košarka'], hourSlot(-10), 1, 'cancelled'),
+    // Closed/hall reservations this week so the employee calendar drag-and-drop is demonstrable.
+    r(fBeograd, fBeograd.resources[2], a2, S['Košarka'], thisWeekAt(1, 18), 1, 'confirmed'), // Hala A (hall)
+    r(fBeograd, fBeograd.resources[1], a3, S['Tenis'], thisWeekAt(2, 10), 1, 'pending'),     // Teniski teren 2 (closed)
     // More completed for a1 at Novi Sad (so a1 can review Novi Sad too)
     r(fNoviSad, fNoviSad.resources[2], a1, S['Rukomet'], hourSlot(-96), 1, 'completed'),
   ];
@@ -320,12 +335,12 @@ async function run() {
 
   // ---- Equipment ----
   const equipment = [
-    { _id: new ObjectId(), name: 'Fudbalska lopta', sport: S['Fudbal'], price: 2500, stock: 30, image: '/uploads/default-equipment.svg', facility: fBeograd._id },
-    { _id: new ObjectId(), name: 'Kopačke', sport: S['Fudbal'], price: 6000, stock: 12, image: '/uploads/default-equipment.svg', facility: fBeograd._id },
-    { _id: new ObjectId(), name: 'Teniski reket', sport: S['Tenis'], price: 9000, stock: 8, image: '/uploads/default-equipment.svg', facility: fBeograd._id },
-    { _id: new ObjectId(), name: 'Košarkaška lopta', sport: S['Košarka'], price: 3200, stock: 20, image: '/uploads/default-equipment.svg', facility: fNis._id },
-    { _id: new ObjectId(), name: 'Odbojkaška lopta', sport: S['Odbojka'], price: 2800, stock: 15, image: '/uploads/default-equipment.svg', facility: fNoviSad._id },
-    { _id: new ObjectId(), name: 'Sportska torba', sport: S['Rukomet'], price: 3500, stock: 0, image: '/uploads/default-equipment.svg', facility: fNoviSad._id },
+    { _id: new ObjectId(), name: 'Fudbalska lopta', sport: S['Fudbal'], price: 2500, stock: 30, image: '/uploads/Fudbalska-lopta.png', facility: fBeograd._id },
+    { _id: new ObjectId(), name: 'Kopačke', sport: S['Fudbal'], price: 6000, stock: 12, image: '/uploads/kopacke.png', facility: fBeograd._id },
+    { _id: new ObjectId(), name: 'Teniski reket', sport: S['Tenis'], price: 9000, stock: 8, image: '/uploads/teniski-reket.png', facility: fBeograd._id },
+    { _id: new ObjectId(), name: 'Košarkaška lopta', sport: S['Košarka'], price: 3200, stock: 20, image: '/uploads/kosarkaska-lopta.png', facility: fNis._id },
+    { _id: new ObjectId(), name: 'Odbojkaška lopta', sport: S['Odbojka'], price: 2800, stock: 15, image: '/uploads/odbojka-lopta.png', facility: fNoviSad._id },
+    { _id: new ObjectId(), name: 'Sportska torba', sport: S['Rukomet'], price: 3500, stock: 0, image: '/uploads/sportska-torba.png', facility: fNoviSad._id },
   ];
   await db.collection('equipment').insertMany(equipment);
 
@@ -334,7 +349,7 @@ async function run() {
     { _id: new ObjectId(), user: a1.username, items: [{ equipment: equipment[0]._id, qty: 2, priceAtOrder: 2500 }], total: 5000, status: 'ordered', createdAt: days(-1) },
     { _id: new ObjectId(), user: a1.username, items: [{ equipment: equipment[2]._id, qty: 1, priceAtOrder: 9000 }], total: 9000, status: 'picked_up', createdAt: days(-7) },
     { _id: new ObjectId(), user: a2.username, items: [{ equipment: equipment[3]._id, qty: 1, priceAtOrder: 3200 }], total: 3200, status: 'cancelled', createdAt: days(-3) },
-    { _id: new ObjectId(), user: a3.username, items: [{ equipment: equipment[2]._id, qty: 1, priceAtOrder: 9000 }, { equipment: equipment[0]._id, qty: 1, priceAtOrder: 2500 }], total: 11500, status: 'ordered', createdAt: days(-2) },
+    { _id: new ObjectId(), user: a3.username, items: [{ equipment: equipment[2]._id, qty: 1, priceAtOrder: 9000 }, { equipment: equipment[0]._id, qty: 1, priceAtOrder: 2500 }], total: 11500, status: 'accepted', createdAt: days(-2) },
     { _id: new ObjectId(), user: a4.username, items: [{ equipment: equipment[4]._id, qty: 3, priceAtOrder: 2800 }], total: 8400, status: 'picked_up', createdAt: days(-12) },
   ];
   await db.collection('orders').insertMany(orders);

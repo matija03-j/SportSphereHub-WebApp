@@ -7,13 +7,27 @@
     @if (f.description) { <p>{{ f.description }}</p> }
   </section>
 
+  <section class="card" style="margin-bottom:1rem">
+    <h2>Galerija</h2>
+    @if (f.images.length) {
+      <div class="row" style="gap:0.5rem">
+        @for (img of f.images; track img) {
+          <img [src]="imgUrl(img)" alt="slika objekta"
+               style="width:200px;height:130px;object-fit:cover;border-radius:8px;border:1px solid var(--border)" />
+        }
+      </div>
+    } @else {
+      <p class="muted">Nema slika.</p>
+    }
+  </section>
+
   @if (message()) { <div class="alert alert-success">{{ message() }}</div> }
   @if (error()) { <div class="alert alert-error">{{ error() }}</div> }
 
   <div class="row" style="align-items:flex-start">
     <section class="card" style="flex:2">
       <h2>Lokacija</h2>
-      <div id="facility-map" style="height:300px;border-radius:8px"></div>
+      <div #mapEl style="height:300px;border-radius:8px"></div>
     </section>
 
     <section class="card" style="flex:1">
@@ -74,8 +88,9 @@
     <h3 style="margin-top:1rem">Poslednji komentari</h3>
     @if (f.recentReviews.length) {
       @for (rev of f.recentReviews; track rev._id) {
-        <div style="border-bottom:1px solid var(--border);padding:0.4rem 0">
-          <strong>{{ $any(rev.user).firstName }} {{ $any(rev.user).lastName }}</strong>
+        <div class="review-item" [class.own-comment]="rev.user.username === myUsername">
+          <strong>{{ rev.user.firstName }} {{ rev.user.lastName }}</strong>
+          @if (rev.user.username === myUsername) { <span class="badge badge-confirmed">Vi</span> }
           {{ rev.reaction === 'like' ? '👍' : '👎' }}
           <div>{{ rev.comment }}</div>
         </div>

@@ -34,7 +34,7 @@
       <h2>Galerija</h2>
       <div class="row">
         @for (img of f.images; track img) {
-          <img [src]="uploads + '/' + img" alt="slika" style="max-width:200px;border-radius:8px" />
+          <img [src]="uploads + '/' + img.replace('/uploads/', '')" alt="slika" style="max-width:200px;border-radius:8px" />
         }
       </div>
     </section>
@@ -44,8 +44,9 @@
     <h2>Poslednji komentari</h2>
     @if (f.recentReviews.length) {
       @for (rev of f.recentReviews; track rev._id) {
-        <div style="border-bottom:1px solid var(--border);padding:0.5rem 0">
-          <strong>{{ $any(rev.user).firstName }} {{ $any(rev.user).lastName }}</strong>
+        <div class="review-item" [class.own-comment]="rev.user.username === myUsername">
+          <strong>{{ rev.user.firstName }} {{ rev.user.lastName }}</strong>
+          @if (rev.user.username === myUsername) { <span class="badge badge-confirmed">Vi</span> }
           <span>{{ rev.reaction === 'like' ? '👍' : '👎' }}</span>
           <span class="muted" style="font-size:0.8rem"> · {{ rev.createdAt | date: 'dd.MM.yyyy' }}</span>
           <div>{{ rev.comment }}</div>

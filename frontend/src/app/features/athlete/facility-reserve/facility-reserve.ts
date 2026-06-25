@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnInit, effect, inject, signal, viewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -6,7 +6,9 @@ import * as L from 'leaflet';
 import { FacilityService, FacilityDetails } from '../../../core/facility.service';
 import { ReservationService } from '../../../core/reservation.service';
 import { ReviewService } from '../../../core/review.service';
+import { AuthService } from '../../../core/auth.service';
 import { WeeklyCalendar } from '../../../shared/weekly-calendar/weekly-calendar';
+import { UPLOADS_BASE } from '../../../core/config';
 
 const CITY_COORDS: Record<string, [number, number]> = {
   Beograd: [44.7866, 20.4489],
@@ -20,13 +22,31 @@ const CITY_COORDS: Record<string, [number, number]> = {
   imports: [WeeklyCalendar, DatePipe, FormsModule],
   templateUrl: './facility-reserve.html',
 })
-export class FacilityReserve implements OnInit, AfterViewInit {
+export class FacilityReserve implements OnInit {
   private route = inject(ActivatedRoute);
   private facilityService = inject(FacilityService);
   private reservationService = inject(ReservationService);
   private reviewService = inject(ReviewService);
+  private auth = inject(AuthService);
 
+  myUsername = this.auth.user()?.username;
+  uploads = UPLOADS_BASE;
   facility = signal<FacilityDetails | null>(null);
+  private mapEl = viewChild<ElementRef<HTMLElement>>('mapEl');
+
+  imgUrl(img: string): string {
+    return this.uploads + '/' + img.replace('/uploads/', '');
+  }
+
+  constructor() {
+    // Initialize the map only once both the data and the (conditionally
+    // rendered) container element are available.
+    effect(() => {
+      const host = this.mapEl();
+      const f = this.facility();
+      if (host && f && !this.map) this.initMap(host.nativeElement, f);
+    });
+  }
   resourceIndex = signal(0);
   selectedSlot = signal<Date | null>(null);
   duration = 1;
@@ -41,13 +61,8 @@ export class FacilityReserve implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
-    this.facilityService.details(id).subscribe((f) => {
-      this.facility.set(f);
-      setTimeout(() => this.initMap(f), 0);
-    });
+    this.facilityService.details(id).subscribe((f) => this.facility.set(f));
   }
-
-  ngAfterViewInit(): void {}
 
   get currentResource() {
     return this.facility()?.resources[this.resourceIndex()];
@@ -112,16 +127,18 @@ export class FacilityReserve implements OnInit, AfterViewInit {
     this.facilityService.details(id).subscribe((f) => this.facility.set(f));
   }
 
-  private initMap(f: FacilityDetails): void {
+  private initMap(el: HTMLElement, f: FacilityDetails): void {
     if (this.map) return;
-    const el = document.getElementById('facility-map');
-    if (!el) return;
-    const coords = CITY_COORDS[f.city] || [44.0, 20.9];
-    this.map = L.map(el).setView(coords, 13);
+    const coords: [number, number] = f.location
+      ? [f.location.lat, f.location.lng]
+      : CITY_COORDS[f.city] || [44.0, 20.9];
+    this.map = L.map(el).setView(coords, 14);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap',
     }).addTo(this.map);
     const icon = L.divIcon({ html: '📍', className: 'map-pin', iconSize: [24, 24] });
     L.marker(coords, { icon }).addTo(this.map).bindPopup(`${f.name}<br>${f.address}`);
+    // Container size isn't final on first paint inside the @if block.
+    setTimeout(() => this.map?.invalidateSize(), 0);
   }
 }

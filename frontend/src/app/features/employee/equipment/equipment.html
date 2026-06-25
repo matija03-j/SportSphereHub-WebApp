@@ -58,10 +58,13 @@
             <td>{{ $any(o.user).firstName }} {{ $any(o.user).lastName }}</td>
             <td>@for (it of o.items; track $index) { <div>{{ $any(it.equipment).name }} × {{ it.qty }}</div> }</td>
             <td>{{ o.total }} RSD</td>
-            <td><span class="badge badge-{{ o.status === 'cancelled' ? 'cancelled' : o.status === 'picked_up' ? 'completed' : 'pending' }}">{{ o.status }}</span></td>
+            <td><span class="badge badge-{{ o.status === 'cancelled' ? 'cancelled' : o.status === 'picked_up' ? 'completed' : o.status === 'accepted' ? 'confirmed' : 'pending' }}">{{ o.status }}</span></td>
             <td>
               @if (o.status === 'ordered') {
-                <button class="btn btn-sm btn-success" (click)="setStatus(o, 'picked_up')">Preuzeto</button>
+                <button class="btn btn-sm btn-success" (click)="setStatus(o, 'accepted')">Prihvati</button>
+                <button class="btn btn-sm btn-danger" (click)="setStatus(o, 'cancelled')">Otkaži</button>
+              } @else if (o.status === 'accepted') {
+                <button class="btn btn-sm btn-success" (click)="setStatus(o, 'picked_up')">Preuzmi</button>
                 <button class="btn btn-sm btn-danger" (click)="setStatus(o, 'cancelled')">Otkaži</button>
               }
             </td>

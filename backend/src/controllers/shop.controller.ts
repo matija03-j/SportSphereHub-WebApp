@@ -65,7 +65,9 @@ export async function cancelOrder(req: Request, res: Response, next: NextFunctio
   try {
     const order = await Order.findOne({ _id: req.params.id, user: req.user!.username });
     if (!order) throw new HttpError(404, 'Porudžbina nije pronađena.');
-    if (order.status !== 'ordered') throw new HttpError(400, 'Samo aktivne porudžbine se mogu otkazati.');
+    if (order.status !== 'ordered' && order.status !== 'accepted') {
+      throw new HttpError(400, 'Samo aktivne porudžbine se mogu otkazati.');
+    }
     for (const it of order.items) {
       await Equipment.updateOne({ _id: it.equipment }, { $inc: { stock: it.qty } });
     }

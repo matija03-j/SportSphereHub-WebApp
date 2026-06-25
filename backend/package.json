@@ -8,7 +8,8 @@
     "serve": "node dist/server.js",
     "build": "tsc",
     "dev": "nodemon --watch src --ext ts --exec \"ts-node src/server.ts\"",
-    "seed": "node seed/seed.js"
+    "seed": "node seed/seed.js",
+    "normalize-cities": "node seed/normalize-cities.js"
   },
   "author": "",
   "license": "ISC",

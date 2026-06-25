@@ -9,6 +9,7 @@ import { Sport } from '../../../core/models';
 import {
   maticniBrojValidator,
   passwordValidator,
+  phoneValidator,
   pibValidator,
 } from '../../../core/validators';
 
@@ -36,12 +37,15 @@ export class Register implements OnInit {
   imagePreview = signal<string>('');
   avatarSvg = signal<string>('');
 
+  /** Employee-only: gallery images for the facility being registered. */
+  facilityImages: File[] = [];
+
   form = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
     password: ['', [Validators.required, passwordValidator]],
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
-    phone: ['', Validators.required],
+    phone: ['', [Validators.required, phoneValidator]],
     email: ['', [Validators.required, Validators.email]],
     role: ['athlete', Validators.required],
     // Employee-only
@@ -74,13 +78,36 @@ export class Register implements OnInit {
     set(c.pib, required ? [Validators.required, pibValidator] : [pibValidator]);
   }
 
-  toggleSport(id: string): void {
-    const cur = this.selectedSports();
-    if (cur.includes(id)) {
-      this.selectedSports.set(cur.filter((s) => s !== id));
-    } else if (cur.length < 5) {
-      this.selectedSports.set([...cur, id]);
+  sportsError = signal('');
+
+  /** Reads selected <option>s from the multi-select; caps at 5 sports. */
+  onSportsChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const chosen = Array.from(select.selectedOptions).map((o) => o.value);
+    if (chosen.length > 5) {
+      this.sportsError.set('Možete izabrati najviše 5 sportova.');
+      // Keep only the first 5 and reflect that back in the UI.
+      const kept = chosen.slice(0, 5);
+      Array.from(select.options).forEach((o) => (o.selected = kept.includes(o.value)));
+      this.selectedSports.set(kept);
+    } else {
+      this.sportsError.set('');
+      this.selectedSports.set(chosen);
     }
+  }
+
+  /** Strips characters that aren't digits, +, or space as the user types. */
+  sanitizePhone(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const cleaned = input.value.replace(/[^\d+\s]/g, '');
+    if (cleaned !== input.value) {
+      input.value = cleaned;
+      this.form.controls.phone.setValue(cleaned);
+    }
+  }
+
+  onFacilityImages(event: Event): void {
+    this.facilityImages = Array.from((event.target as HTMLInputElement).files ?? []);
   }
 
   onFile(event: Event): void {
@@ -126,6 +153,9 @@ export class Register implements OnInit {
     if (this.imageBlob) {
       const name = this.imageBlob instanceof File ? this.imageBlob.name : 'avatar.png';
       fd.append('profileImage', this.imageBlob, name);
+    }
+    if (this.isEmployee) {
+      this.facilityImages.forEach((f) => fd.append('images', f));
     }
 
     this.loading.set(true);

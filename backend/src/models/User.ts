@@ -24,7 +24,7 @@ const userSchema = new Schema<IUser>(
     lastName: { type: String, required: true },
     phone: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    profileImage: { type: String, default: '/uploads/default-avatar.svg' },
+    profileImage: { type: String, default: '/uploads/default-avatar.png' },
     sports: [{ type: String }],
     role: { type: String, enum: ['athlete', 'employee', 'admin'], required: true },
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },

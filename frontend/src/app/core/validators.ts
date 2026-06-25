@@ -16,6 +16,15 @@ export function maticniBrojValidator(control: AbstractControl): ValidationErrors
   return /^\d{8}$/.test(v) ? null : { maticni: true };
 }
 
+/** Phone: digits with optional leading + and spaces (no letters). */
+export const PHONE_REGEX = /^\+?[\d\s]{6,20}$/;
+
+export function phoneValidator(control: AbstractControl): ValidationErrors | null {
+  const v = control.value;
+  if (!v) return null;
+  return PHONE_REGEX.test(v) ? null : { phone: true };
+}
+
 /** Exactly 9 digits, not starting with zero. */
 export function pibValidator(control: AbstractControl): ValidationErrors | null {
   const v = control.value;

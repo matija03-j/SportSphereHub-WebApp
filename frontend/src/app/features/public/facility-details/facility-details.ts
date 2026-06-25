@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { FacilityService, FacilityDetails as FD } from '../../../core/facility.service';
+import { AuthService } from '../../../core/auth.service';
 import { UPLOADS_BASE } from '../../../core/config';
 
 @Component({
@@ -12,10 +13,12 @@ import { UPLOADS_BASE } from '../../../core/config';
 export class FacilityDetails implements OnInit {
   private route = inject(ActivatedRoute);
   private facilityService = inject(FacilityService);
+  private auth = inject(AuthService);
 
   facility = signal<FD | null>(null);
   notFound = signal(false);
   uploads = UPLOADS_BASE;
+  myUsername = this.auth.user()?.username;
 
   typeLabel: Record<string, string> = { open: 'Otvoreni teren', closed: 'Zatvoreni teren', hall: 'Dvorana' };
 

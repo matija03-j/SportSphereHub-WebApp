@@ -58,11 +58,10 @@ export class FacilitySearch implements OnInit {
     this.facilityService.cities().subscribe((c) => this.cities.set(c));
   }
 
-  toggleCity(city: string): void {
-    const cur = this.selectedCities();
-    this.selectedCities.set(
-      cur.includes(city) ? cur.filter((c) => c !== city) : [...cur, city]
-    );
+  /** Reads selected <option>s from the city multi-select dropdown. */
+  onCitiesChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.selectedCities.set(Array.from(select.selectedOptions).map((o) => o.value));
   }
 
   search(): void {

@@ -1,6 +1,6 @@
 import { Schema, model, Document, Types } from 'mongoose';
 
-export type OrderStatus = 'ordered' | 'picked_up' | 'cancelled';
+export type OrderStatus = 'ordered' | 'accepted' | 'picked_up' | 'cancelled';
 
 export interface IOrderItem {
   equipment: Types.ObjectId;
@@ -32,7 +32,7 @@ const orderSchema = new Schema<IOrder>(
     total: { type: Number, required: true },
     status: {
       type: String,
-      enum: ['ordered', 'picked_up', 'cancelled'],
+      enum: ['ordered', 'accepted', 'picked_up', 'cancelled'],
       default: 'ordered',
     },
   },

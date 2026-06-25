@@ -44,7 +44,10 @@
     <div class="row">
       <div class="form-group">
         <label for="phone">Kontakt telefon</label>
-        <input id="phone" formControlName="phone" />
+        <input id="phone" formControlName="phone" inputmode="tel" (input)="sanitizePhone($event)" />
+        @if (form.controls.phone.touched && form.controls.phone.invalid) {
+          <div class="field-error">Telefon sme sadržati samo cifre, + i razmak.</div>
+        }
       </div>
       <div class="form-group">
         <label for="email">E-mejl</label>
@@ -56,16 +59,14 @@
     </div>
 
     <div class="form-group">
-      <label>Omiljeni sportovi (najviše 5)</label>
-      <div class="chips">
+      <label for="sports">Omiljeni sportovi (padajuća lista, najviše 5)</label>
+      <select id="sports" multiple size="6" (change)="onSportsChange($event)">
         @for (s of sports(); track s._id) {
-          <span
-            class="chip"
-            [class.selected]="selectedSports().includes(s.name)"
-            (click)="toggleSport(s.name)"
-          >{{ s.name }}</span>
+          <option [value]="s.name" [selected]="selectedSports().includes(s.name)">{{ s.name }}</option>
         }
-      </div>
+      </select>
+      <small class="muted">Držite Ctrl (Cmd) za izbor više sportova.</small>
+      @if (sportsError()) { <div class="field-error">{{ sportsError() }}</div> }
     </div>
 
     <!-- Employee-only fields -->
@@ -101,6 +102,11 @@
               <div class="field-error">Tačno 9 cifara, ne počinje nulom.</div>
             }
           </div>
+        </div>
+        <div class="form-group">
+          <label>Slike objekta (više)</label>
+          <input type="file" accept="image/*" multiple (change)="onFacilityImages($event)" />
+          @if (facilityImages.length) { <small class="muted">Izabrano slika: {{ facilityImages.length }}</small> }
         </div>
       </fieldset>
     }

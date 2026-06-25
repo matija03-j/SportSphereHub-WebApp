@@ -48,6 +48,7 @@ export interface Facility {
   workingHours: { open: string; close: string };
   maxNoShows: number;
   sports: string[]; // sport names
+  location?: { lat: number; lng: number };
   description: string;
   images: string[];
   likes: string[];
@@ -116,7 +117,7 @@ export interface Equipment {
   facility: Facility | string;
 }
 
-export type OrderStatus = 'ordered' | 'picked_up' | 'cancelled';
+export type OrderStatus = 'ordered' | 'accepted' | 'picked_up' | 'cancelled';
 
 export interface OrderItem {
   equipment: Equipment | string;

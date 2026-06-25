@@ -62,8 +62,9 @@
                       cdkDrag
                       [cdkDragData]="c.reservation"
                       [cdkDragDisabled]="!isMovable()"
+                      [title]="isMovable() ? 'Prevucite za pomeranje termina' : ''"
                     >
-                      Rezervacija
+                      Rezervacija {{ c.reservation.start | date: 'HH:mm' }}
                     </div>
                   }
                 </td>

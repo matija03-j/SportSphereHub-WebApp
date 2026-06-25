@@ -21,13 +21,20 @@ const passwordRule = body('password')
 
 authRouter.post(
   '/register',
-  uploadImage.single('profileImage'),
+  uploadImage.fields([
+    { name: 'profileImage', maxCount: 1 },
+    { name: 'images', maxCount: 10 },
+  ]),
   validate([
     body('username').isString().trim().isLength({ min: 3 }).withMessage('Korisničko ime je obavezno (min 3).'),
     passwordRule,
     body('firstName').notEmpty().withMessage('Ime je obavezno.'),
     body('lastName').notEmpty().withMessage('Prezime je obavezno.'),
-    body('phone').notEmpty().withMessage('Telefon je obavezan.'),
+    body('phone')
+      .notEmpty()
+      .withMessage('Telefon je obavezan.')
+      .matches(/^\+?[\d\s]{6,20}$/)
+      .withMessage('Telefon sme sadržati samo cifre, + i razmak.'),
     body('email').isEmail().withMessage('Neispravan e-mejl.'),
     body('role').isIn(['athlete', 'employee']).withMessage('Nepoznata uloga.'),
     // Employee-only fields, validated conditionally.

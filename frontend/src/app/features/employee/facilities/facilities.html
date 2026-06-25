@@ -20,6 +20,7 @@
     <div class="form-group"><label>Zatvaranje</label><input type="time" [(ngModel)]="newFacility.workingHours.close" /></div>
     <div class="form-group"><label>Dozvoljeni nedolasci</label><input type="number" [(ngModel)]="newFacility.maxNoShows" /></div>
   </div>
+  <p class="muted" style="font-size:0.8rem">Lokacija (koordinate) se automatski određuje iz adrese.</p>
   <div class="form-group">
     <label>Sportovi</label>
     <div class="chips">
@@ -27,6 +28,11 @@
         <span class="chip" [class.selected]="newFacility.sports.includes(s.name)" (click)="toggleSport(s.name)">{{ s.name }}</span>
       }
     </div>
+  </div>
+  <div class="form-group">
+    <label>Slike objekta (više)</label>
+    <input type="file" accept="image/*" multiple (change)="onNewImages($event)" />
+    @if (newImages.length) { <small class="muted">Izabrano slika: {{ newImages.length }}</small> }
   </div>
   <button class="btn" (click)="create()">Kreiraj objekat</button>
 
@@ -40,15 +46,81 @@
   <section class="card" style="margin-bottom:1rem">
     <div style="display:flex;justify-content:space-between;align-items:center">
       <h2 style="margin:0">{{ f.name }} <span class="muted">({{ f.city }})</span></h2>
-      <span class="badge badge-{{ f.status === 'approved' ? 'confirmed' : 'pending' }}">{{ f.status }}</span>
+      <span>
+        <span class="badge badge-{{ f.status === 'approved' ? 'confirmed' : 'pending' }}">{{ f.status }}</span>
+        @if (!editFacility[f._id]) {
+          <button class="btn btn-sm" (click)="startEditFacility(f)">Izmeni objekat</button>
+        }
+      </span>
     </div>
-    <p class="muted">{{ f.address }} · {{ f.pricePerHour }} RSD/sat · {{ f.workingHours.open }}–{{ f.workingHours.close }}</p>
 
+    @if (editFacility[f._id]; as ef) {
+      <!-- Edit facility form -->
+      <div class="row">
+        <div class="form-group"><label>Naziv</label><input [(ngModel)]="ef.name" /></div>
+        <div class="form-group"><label>Grad</label><input [(ngModel)]="ef.city" /></div>
+        <div class="form-group"><label>Adresa</label><input [(ngModel)]="ef.address" /></div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label>Cena/sat</label><input type="number" [(ngModel)]="ef.pricePerHour" /></div>
+        <div class="form-group"><label>Otvaranje</label><input type="time" [(ngModel)]="ef.workingHours.open" /></div>
+        <div class="form-group"><label>Zatvaranje</label><input type="time" [(ngModel)]="ef.workingHours.close" /></div>
+        <div class="form-group"><label>Dozvoljeni nedolasci</label><input type="number" [(ngModel)]="ef.maxNoShows" /></div>
+      </div>
+      <div class="form-group"><label>Opis</label><textarea rows="2" [(ngModel)]="ef.description"></textarea></div>
+      <div class="form-group">
+        <label>Sportovi</label>
+        <div class="chips">
+          @for (s of sports(); track s._id) {
+            <span class="chip" [class.selected]="ef.sports.includes(s.name)" (click)="toggleEditSport(f._id, s.name)">{{ s.name }}</span>
+          }
+        </div>
+      </div>
+      <button class="btn btn-sm btn-success" (click)="saveFacility(f)">Sačuvaj</button>
+      <button class="btn btn-sm btn-secondary" (click)="cancelEditFacility(f._id)">Otkaži</button>
+    } @else {
+      <p class="muted">{{ f.address }} · {{ f.pricePerHour }} RSD/sat · {{ f.workingHours.open }}–{{ f.workingHours.close }} · nedolasci: {{ f.maxNoShows }}</p>
+    }
+
+    <!-- Gallery -->
+    <div class="form-group" style="margin-top:0.5rem">
+      <label>Galerija</label>
+      <div class="row" style="gap:0.5rem">
+        @for (img of f.images; track img) {
+          <div style="position:relative">
+            <img [src]="imgUrl(img)" alt="slika" style="width:120px;height:80px;object-fit:cover;border-radius:6px;border:1px solid var(--border)" />
+            <button class="btn btn-sm btn-danger" style="position:absolute;top:2px;right:2px;padding:0 0.4rem" (click)="removeImage(f, img)">✕</button>
+          </div>
+        }
+        @if (!f.images.length) { <span class="muted">Nema slika.</span> }
+      </div>
+      <input type="file" accept="image/*" multiple (change)="onAddImages(f, $event)" style="margin-top:0.4rem" />
+    </div>
+
+    <!-- Resources -->
     <table class="table">
-      <thead><tr><th>Naziv</th><th>Tip</th><th>Kapacitet</th><th>Sport</th></tr></thead>
+      <thead><tr><th>Naziv</th><th>Tip</th><th>Kapacitet</th><th>Sport</th><th>Opis opreme</th><th></th></tr></thead>
       <tbody>
         @for (r of f.resources; track r._id) {
-          <tr><td>{{ r.name }}</td><td>{{ r.type }}</td><td>{{ r.capacity }}</td><td>{{ r.sport }}</td></tr>
+          @if (editResource[r._id]; as er) {
+            <tr>
+              <td><input [(ngModel)]="er.name" /></td>
+              <td>{{ r.type }}</td>
+              <td><input type="number" style="width:80px" [(ngModel)]="er.capacity" /></td>
+              <td>{{ r.sport }}</td>
+              <td><textarea rows="2" maxlength="300" [(ngModel)]="er.equipmentDescription"></textarea></td>
+              <td>
+                <button class="btn btn-sm btn-success" (click)="saveResource(f, r)">Sačuvaj</button>
+                <button class="btn btn-sm btn-secondary" (click)="cancelEditResource(r._id)">Otkaži</button>
+              </td>
+            </tr>
+          } @else {
+            <tr>
+              <td>{{ r.name }}</td><td>{{ r.type }}</td><td>{{ r.capacity }}</td><td>{{ r.sport }}</td>
+              <td class="muted">{{ r.equipmentDescription }}</td>
+              <td><button class="btn btn-sm" (click)="startEditResource(r)">Izmeni</button></td>
+            </tr>
+          }
         }
       </tbody>
     </table>

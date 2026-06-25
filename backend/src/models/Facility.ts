@@ -23,6 +23,7 @@ export interface IFacility extends Document {
   workingHours: { open: string; close: string };
   maxNoShows: number;
   sports: string[]; // sport names
+  location?: { lat: number; lng: number };
   description: string;
   images: string[];
   likes: string[]; // usernames
@@ -54,6 +55,10 @@ const facilitySchema = new Schema<IFacility>(
     },
     maxNoShows: { type: Number, default: 3 },
     sports: [{ type: String }],
+    location: {
+      lat: { type: Number },
+      lng: { type: Number },
+    },
     description: { type: String, default: '' },
     images: [{ type: String }],
     likes: [{ type: String }],

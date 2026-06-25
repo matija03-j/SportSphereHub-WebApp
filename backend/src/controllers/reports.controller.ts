@@ -30,7 +30,7 @@ function startPdf(res: Response, filename: string): PDFKit.PDFDocument {
 export async function occupancyReport(req: Request, res: Response, next: NextFunction) {
   try {
     const { start, end, label } = monthRange(req.query.month as string);
-    const facilities = await Facility.find({ employees: req.user!.id }).lean();
+    const facilities = await Facility.find({ employees: req.user!.username }).lean();
 
     const daysInMonth = new Date(start.getFullYear(), start.getMonth() + 1, 0).getDate();
 
@@ -74,7 +74,7 @@ export async function occupancyReport(req: Request, res: Response, next: NextFun
 export async function equipmentReport(req: Request, res: Response, next: NextFunction) {
   try {
     const { start, end, label } = monthRange(req.query.month as string);
-    const ids = await myFacilityIds(req.user!.id);
+    const ids = await myFacilityIds(req.user!.username);
     const equipment = await Equipment.find({ facility: { $in: ids } }).lean();
     const eqMap = new Map(equipment.map((e) => [String(e._id), e]));
 

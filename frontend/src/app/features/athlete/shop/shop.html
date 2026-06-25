@@ -63,9 +63,9 @@
               }
             </td>
             <td>{{ o.total }} RSD</td>
-            <td><span class="badge badge-{{ o.status === 'cancelled' ? 'cancelled' : o.status === 'picked_up' ? 'completed' : 'pending' }}">{{ o.status }}</span></td>
+            <td><span class="badge badge-{{ o.status === 'cancelled' ? 'cancelled' : o.status === 'picked_up' ? 'completed' : o.status === 'accepted' ? 'confirmed' : 'pending' }}">{{ o.status }}</span></td>
             <td>
-              @if (o.status === 'ordered') {
+              @if (o.status === 'ordered' || o.status === 'accepted') {
                 <button class="btn btn-sm btn-danger" (click)="cancelOrder(o)">Otkaži</button>
               }
             </td>

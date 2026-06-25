@@ -27,6 +27,20 @@ export class EmployeeService {
   addResource(id: string, data: any): Observable<Facility> {
     return this.http.post<Facility>(`${this.base}/facilities/${id}/resources`, data);
   }
+  updateResource(facilityId: string, resourceId: string, data: any): Observable<Facility> {
+    return this.http.patch<Facility>(
+      `${this.base}/facilities/${facilityId}/resources/${resourceId}`,
+      data
+    );
+  }
+  uploadFacilityImages(id: string, files: File[]): Observable<Facility> {
+    const fd = new FormData();
+    files.forEach((f) => fd.append('images', f));
+    return this.http.post<Facility>(`${this.base}/facilities/${id}/images`, fd);
+  }
+  removeFacilityImage(id: string, filename: string): Observable<Facility> {
+    return this.http.delete<Facility>(`${this.base}/facilities/${id}/images/${filename}`);
+  }
 
   // Reservations & trainings
   reservations(): Observable<{ reservations: any[]; trainings: any[] }> {

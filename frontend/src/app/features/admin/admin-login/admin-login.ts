@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
@@ -28,13 +28,18 @@ import { AuthService } from '../../../core/auth.service';
     </div>
   `,
 })
-export class AdminLogin {
+export class AdminLogin implements OnInit {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
 
   error = signal('');
   loading = signal(false);
+
+  ngOnInit(): void {
+    // An already-authenticated admin landing on /admin goes straight to the dashboard.
+    if (this.auth.role() === 'admin') this.router.navigate(['/admin/users']);
+  }
 
   form = this.fb.nonNullable.group({
     username: ['', Validators.required],

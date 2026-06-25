@@ -29,13 +29,6 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/public/facility-details/facility-details').then((m) => m.FacilityDetails),
   },
-  {
-    // Hidden admin login — not linked from the home page or menu.
-    path: 'sys-admin-2f9',
-    loadComponent: () =>
-      import('./features/admin/admin-login/admin-login').then((m) => m.AdminLogin),
-  },
-
   // ---- Athlete ----
   {
     path: 'athlete',
@@ -70,16 +63,17 @@ export const routes: Routes = [
   },
 
   // ---- Admin ----
+  // Hidden admin login lives at /admin (not linked from the home page or menu);
+  // the feature pages stay under /admin/* and remain role-guarded.
   {
     path: 'admin',
-    canActivate: [roleGuard('admin')],
     children: [
-      { path: 'users', loadComponent: () => import('./features/admin/users/users').then((m) => m.AdminUsers) },
-      { path: 'requests', loadComponent: () => import('./features/admin/requests/requests').then((m) => m.AdminRequests) },
-      { path: 'facilities', loadComponent: () => import('./features/admin/facilities/facilities').then((m) => m.AdminFacilities) },
-      { path: 'trainers', loadComponent: () => import('./features/admin/trainers/trainers').then((m) => m.AdminTrainers) },
-      { path: 'sports', loadComponent: () => import('./features/admin/sports/sports').then((m) => m.AdminSports) },
-      { path: '', redirectTo: 'users', pathMatch: 'full' },
+      { path: '', loadComponent: () => import('./features/admin/admin-login/admin-login').then((m) => m.AdminLogin) },
+      { path: 'users', canActivate: [roleGuard('admin')], loadComponent: () => import('./features/admin/users/users').then((m) => m.AdminUsers) },
+      { path: 'requests', canActivate: [roleGuard('admin')], loadComponent: () => import('./features/admin/requests/requests').then((m) => m.AdminRequests) },
+      { path: 'facilities', canActivate: [roleGuard('admin')], loadComponent: () => import('./features/admin/facilities/facilities').then((m) => m.AdminFacilities) },
+      { path: 'trainers', canActivate: [roleGuard('admin')], loadComponent: () => import('./features/admin/trainers/trainers').then((m) => m.AdminTrainers) },
+      { path: 'sports', canActivate: [roleGuard('admin')], loadComponent: () => import('./features/admin/sports/sports').then((m) => m.AdminSports) },
     ],
   },
 

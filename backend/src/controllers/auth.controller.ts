@@ -5,6 +5,8 @@ import { hashPassword, comparePassword } from '../utils/password';
 import { signToken, randomToken } from '../utils/token';
 import { sendResetEmail } from '../utils/mailer';
 import { HttpError } from '../middleware/error';
+import { normalizeCity } from '../utils/cities';
+import { geocodeAddress } from '../utils/geocode';
 import { env } from '../config/env';
 
 /** Shapes a user document for client responses (no password hash). */
@@ -27,7 +29,11 @@ export async function register(req: Request, res: Response, next: NextFunction) 
       throw new HttpError(422, 'Nepoznata uloga.');
     }
 
-    const profileImage = req.file ? `/uploads/${req.file.filename}` : undefined;
+    // Multer is configured with .fields() so files arrive grouped by field name.
+    const files = req.files as { [field: string]: Express.Multer.File[] } | undefined;
+    const profileFile = files?.['profileImage']?.[0];
+    const profileImage = profileFile ? `/uploads/${profileFile.filename}` : undefined;
+    const facilityImages = (files?.['images'] || []).map((f) => f.filename);
     const passwordHash = await hashPassword(password);
 
     const user = await User.create({
@@ -55,15 +61,19 @@ export async function register(req: Request, res: Response, next: NextFunction) 
         facility.employees.push(user.username);
         await facility.save();
       } else {
+        const city = normalizeCity(req.body.city || '');
+        const location = (await geocodeAddress(address, city)) || undefined;
         await Facility.create({
           name: facilityName,
-          city: req.body.city || '',
+          city,
           address,
           maticniBroj,
           pib,
           employees: [user.username],
           status: 'pending',
           pricePerHour: Number(req.body.pricePerHour) || 1500,
+          location,
+          images: facilityImages,
         });
       }
     }
@@ -129,7 +139,7 @@ export async function forgotPassword(req: Request, res: Response, next: NextFunc
     if (user) {
       const token = randomToken();
       await PasswordResetToken.create({
-        user: user._id,
+        user: user.username,
         token,
         expiresAt: new Date(Date.now() + 30 * 60 * 1000),
       });
@@ -149,7 +159,7 @@ export async function resetPassword(req: Request, res: Response, next: NextFunct
       throw new HttpError(400, 'Link za resetovanje je nevažeći ili je istekao.');
     }
     const passwordHash = await hashPassword(password);
-    await User.updateOne({ _id: record.user }, { passwordHash });
+    await User.updateOne({ username: record.user }, { passwordHash });
     await PasswordResetToken.deleteOne({ _id: record._id });
     res.json({ message: 'Lozinka je uspešno promenjena.' });
   } catch (err) {

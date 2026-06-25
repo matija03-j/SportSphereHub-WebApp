@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
@@ -31,14 +31,19 @@ export class EmployeeCalendar implements OnInit {
 
   days = ['Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'];
 
-  selectedFacility = computed(() => this.facilities().find((f) => f._id === this.facilityId));
-  selectedResource = computed(() =>
-    this.selectedFacility()?.resources.find((r) => r._id === this.resourceId)
-  );
-  isMovable = computed(() => {
+  // Plain methods (not computed): they must read the ngModel-bound plain
+  // properties `facilityId`/`resourceId`, which are NOT signals, so a computed
+  // would never recompute when the dropdowns change.
+  selectedFacility(): Facility | undefined {
+    return this.facilities().find((f) => f._id === this.facilityId);
+  }
+  selectedResource() {
+    return this.selectedFacility()?.resources.find((r) => r._id === this.resourceId);
+  }
+  isMovable(): boolean {
     const t = this.selectedResource()?.type;
     return t === 'closed' || t === 'hall';
-  });
+  }
 
   ngOnInit(): void {
     this.employeeService.facilities().subscribe((f) => this.facilities.set(f));
@@ -72,8 +77,10 @@ export class EmployeeCalendar implements OnInit {
     const end = new Date(start.getTime() + 3600 * 1000);
     const reservation =
       this.slots().find((s) => new Date(s.start) < end && new Date(s.end) > start) || null;
-    // Only show the card in the cell where the reservation starts.
-    const startsHere = reservation && new Date(reservation.start).getTime() === start.getTime();
+    // Show the card in the hour cell where the reservation begins (handles
+    // reservations that don't start exactly on the full hour too).
+    const rStart = reservation && new Date(reservation.start);
+    const startsHere = !!rStart && rStart >= start && rStart < end;
     return { start, reservation: startsHere ? reservation : null };
   }
 

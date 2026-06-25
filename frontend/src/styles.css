@@ -244,3 +244,14 @@ textarea:focus {
   flex: 1;
   min-width: 200px;
 }
+
+/* Reviews / comments */
+.review-item {
+  border-bottom: 1px solid var(--border);
+  padding: 0.5rem 0.6rem;
+}
+.review-item.own-comment {
+  background: var(--brand-light);
+  border-left: 4px solid var(--brand);
+  border-radius: 4px;
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200">
+  <rect width="320" height="200" fill="#2f80c2"/>
+  <rect x="20" y="120" width="280" height="60" fill="#1e7e44"/>
+  <circle cx="160" cy="70" r="34" fill="#f4f7fa"/>
+  <text x="160" y="160" font-family="Segoe UI, Arial" font-size="20" fill="#fff" text-anchor="middle">Teren 1</text>
+</svg>
